@@ -6,11 +6,11 @@ You can select instances to manage by ID then Start, Stop or simply check if it 
 
 First Step: Launch CMD
 
-![Alt text](images\Start_Stop_v2.cmd.jpg?raw=true "Start / Stop Instances on CMD / Powershell")
+![Alt text](images/Start_Stop_v2.cmd.jpg?raw=true "Start / Stop Instances on CMD / Powershell")
 
 Second Step: The script list instances and Ask you to select an instance, copy and paste the ID, then press enter
 
-![Alt text](images\Start_Stop_v2.cmd_check.jpg?raw=true "Start / Stop Instances on CMD / Powershell ID instance")
+![Alt text](images/Start_Stop_v2.cmd_check.jpg?raw=true "Start / Stop Instances on CMD / Powershell ID instance")
 
 If you write 'check' it the script check simply the state, 
 if you write 'start' the script starts the instance, 

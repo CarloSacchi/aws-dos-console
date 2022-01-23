@@ -26,14 +26,16 @@ goto getConfirmation
 
 :StartInstance
 aws ec2 start-instances --instance-ids %id%
-timeout 2
+echo The Instance is "%id%" starting ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 timeout 5
 goto ExitProgram
 
 :StopIstance
 aws ec2 stop-instances --instance-ids %id%
-timeout 2
+echo The Instance is "%id%" stopping ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 timeout 5
 goto ExitProgram
@@ -55,35 +57,40 @@ goto getConfirmation
 
 :t3small
 aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.small\"}"
-timeout 2
+echo The Instance "%id%" type is changing to t3.small ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5
 goto ExitProgram
 
 :t3medium
 aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.medium\"}"
-timeout 2
+echo The Instance "%id%" type is changing to t3.medium ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5
 goto ExitProgram
 
 :t3large
 aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.large\"}"
-timeout 2
+echo The Instance "%id%" type is changing to t3.large ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5
 goto ExitProgram
 
 :t3xlarge
 aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.xlarge\"}"
-timeout 2
+echo The Instance "%id%" type is changing to t3.xlarge ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5
 goto ExitProgram
 
 :t32xlarge
 aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.2xlarge\"}"
-timeout 2
+echo The Instance "%id%" type is changing to t3.2xlarge ...
+timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5
 goto ExitProgram

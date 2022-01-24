@@ -16,7 +16,7 @@ set /p id="Enter the InstanceID you want to manage: "
 echo -----------------------------------------
 
 :getConfirmation
-set /p ActionInstance=Need to [check/start/stop/change] "%id%" Instance? 
+set /p ActionInstance=Need to [start/stop/check/change] "%id%" Instance? 
 if /I "%ActionInstance%"=="start" goto :StartInstance
 if /I "%ActionInstance%"=="stop" goto :StopIstance
 if /I "%ActionInstance%"=="check" goto :CheckIstance
@@ -26,6 +26,7 @@ goto getConfirmation
 
 :StartInstance
 aws ec2 start-instances --instance-ids %id%
+timeout 2 > nul
 echo The Instance is "%id%" starting ...
 timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
@@ -34,6 +35,7 @@ goto ExitProgram
 
 :StopIstance
 aws ec2 stop-instances --instance-ids %id%
+timeout 2 > nul
 echo The Instance is "%id%" stopping ...
 timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
@@ -47,49 +49,10 @@ goto ExitProgram
 
 :GetIstance
 set /p ActionChangeInstance=Set instance "%id%" type to [t3.small/t3.medium/t3.large/t3.xlarge/t3.2xlarge]:
-if /I "%ActionChangeInstance%"=="t3.small" goto :t3small
-if /I "%ActionChangeInstance%"=="t3.medium" goto :t3medium
-if /I "%ActionChangeInstance%"=="t3.large" goto :t3large
-if /I "%ActionChangeInstance%"=="t3.xlarge" goto :t3xlarge
-if /I "%ActionChangeInstance%"=="t3.2xlarge" goto :t32xlarge
-REM added goto getConfirmation in case of invalid responses
-goto getConfirmation
 
-:t3small
-aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.small\"}"
-echo The Instance "%id%" type is changing to t3.small ...
-timeout 2 > nul
-aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
-timeout 5
-goto ExitProgram
-
-:t3medium
-aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.medium\"}"
-echo The Instance "%id%" type is changing to t3.medium ...
-timeout 2 > nul
-aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
-timeout 5
-goto ExitProgram
-
-:t3large
-aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.large\"}"
-echo The Instance "%id%" type is changing to t3.large ...
-timeout 2 > nul
-aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
-timeout 5
-goto ExitProgram
-
-:t3xlarge
-aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.xlarge\"}"
-echo The Instance "%id%" type is changing to t3.xlarge ...
-timeout 2 > nul
-aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
-timeout 5
-goto ExitProgram
-
-:t32xlarge
-aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \"t3.2xlarge\"}"
-echo The Instance "%id%" type is changing to t3.2xlarge ...
+:ChangeInstance
+aws ec2 modify-instance-attribute --instance-id %id% --instance-type "{\"Value\": \""%ActionChangeInstance%"\"}"
+echo The Instance "%id%" type is changing to "%ActionChangeInstance%" ...
 timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value}" --output table --color off
 timeout 5

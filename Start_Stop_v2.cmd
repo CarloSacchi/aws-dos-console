@@ -1,15 +1,18 @@
 @echo off
+
 echo -----------------------------------------
 echo Checking the Instances on AWS EC2 for
 
 aws iam list-account-aliases --output table --color off
 
-echo -----------------------------------------
+FOR /F "tokens=* USEBACKQ" %%F IN (`aws configure get region`) DO (
+SET region=%%F
+)
+echo Your current region is: %region%
 
 aws ec2 describe-instances --query "Reservations[*].Instances[*].{InstanceID:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 
 echo -----------------------------------------
-
 :askInstance
 set /p id="Enter the InstanceID you want to manage: "
 
@@ -26,8 +29,7 @@ goto getConfirmation
 
 :StartInstance
 aws ec2 start-instances --instance-ids %id%
-timeout 2 > nul
-echo The Instance is "%id%" starting ...
+echo The Instance "%id%" is starting ...
 timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 timeout 5
@@ -35,8 +37,7 @@ goto ExitProgram
 
 :StopIstance
 aws ec2 stop-instances --instance-ids %id%
-timeout 2 > nul
-echo The Instance is "%id%" stopping ...
+echo The Instance "%id%" is stopping ...
 timeout 2 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 timeout 5

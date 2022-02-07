@@ -10,16 +10,14 @@ SET region=%%F
 )
 echo Your current region is: %region%
 
-aws ec2 describe-instances --query "Reservations[*].Instances[*].{InstanceID:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
-
-echo -----------------------------------------
 :askInstance
+aws ec2 describe-instances --query "Reservations[*].Instances[*].{InstanceID:InstanceId,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
 set /p id="Enter the InstanceID you want to manage: "
 
 echo -----------------------------------------
 
 :getConfirmation
-set /p ActionInstance=Need to [start/stop/check/change] "%id%" Instance? 
+set /p ActionInstance=Need to [ start / stop / check / change ] "%id%" Instance? 
 if /I "%ActionInstance%"=="start" goto :StartInstance
 if /I "%ActionInstance%"=="stop" goto :StopIstance
 if /I "%ActionInstance%"=="check" goto :CheckIstance
@@ -30,22 +28,19 @@ goto getConfirmation
 :StartInstance
 aws ec2 start-instances --instance-ids %id%
 echo The Instance "%id%" is starting ...
-timeout 2 > nul
+timeout 5 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
-timeout 5
 goto ExitProgram
 
 :StopIstance
 aws ec2 stop-instances --instance-ids %id%
 echo The Instance "%id%" is stopping ...
-timeout 2 > nul
+timeout 5 > nul
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
-timeout 5
 goto ExitProgram
 
 :CheckIstance
 aws ec2 describe-instances --instance-id %id% --query "Reservations[*].Instances[*].{Instance:InstanceId,PublicIP:PublicIpAddress,Type:InstanceType,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name}" --output table --color off
-timeout 5
 goto ExitProgram
 
 :GetIstance
@@ -60,8 +55,8 @@ timeout 5
 goto ExitProgram
 
 :ExitProgram
-set /p ActionExit=Want to exit [y/n]? 
-if /I "%ActionExit%"=="y" goto end
-if /I "%ActionExit%"=="n" goto getConfirmation
+set /p ActionExit=Do you want to exit (e) or manage another instance (c)? 
+if /I "%ActionExit%"=="e" goto end
+if /I "%ActionExit%"=="c" goto askInstance
 REM added goto ActionExit in case of invalid responses
 goto ActionExit

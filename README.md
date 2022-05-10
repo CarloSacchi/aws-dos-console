@@ -1,9 +1,10 @@
 # aws-dos-console
 
-Ths is a simple BASH / CMD .cmd script that autmate and simplify some operations:
+Ths is a simple BASH / CMD .cmd script that automate and simplify some operations like:
 - list the EC2 instances (based on your preferred region onn yuor AWS CLI configuration);
 - select ID of the instance to manage;
-- Start / Check / Stop that instance selected.
+- Start / Check / Stop that instance selected
+- Change type of an instance.
 
 You can select instances to manage by ID then Start, Stop or simply check if it is on running state.
 
